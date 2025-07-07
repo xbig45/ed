@@ -35,11 +35,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      setUser({ id: '1', email, name: email.split('@')[0] });
+      // TODO: Implement real authentication with backend API
+      // Example: const response = await authAPI.login({ email, password });
+      // setUser(response.user);
+      
+      throw new Error('Authentication not implemented. Please connect to a real backend service.');
     } catch (error) {
-      throw new Error('Login failed');
+      throw error;
     } finally {
       setIsLoading(false);
     }
@@ -48,17 +50,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const register = async (email: string, password: string, name: string) => {
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      setUser({ id: '1', email, name });
+      // TODO: Implement real user registration with backend API
+      // Example: const response = await authAPI.register({ email, password, name });
+      // setUser(response.user);
+      
+      throw new Error('Registration not implemented. Please connect to a real backend service.');
     } catch (error) {
-      throw new Error('Registration failed');
+      throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
   const logout = () => {
+    // TODO: Implement real logout with backend API
+    // Example: await authAPI.logout();
     setUser(null);
   };
 

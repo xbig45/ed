@@ -89,7 +89,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose, initialMode = 'login' })
       }
       onClose();
     } catch (error) {
-      setErrors({ submit: 'Authentication failed. Please try again.' });
+      setErrors({ submit: error instanceof Error ? error.message : 'Authentication failed. Please connect to a real backend service.' });
     }
   };
 
