@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Mail, Lock, User, Eye, EyeOff, Loader, Sparkles, Shield, Heart, Crown, Zap, Camera, Check } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 
 interface AuthModalProps {
   onClose: () => void;
