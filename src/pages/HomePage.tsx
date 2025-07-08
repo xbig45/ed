@@ -3,7 +3,7 @@ import Header from '../components/Header';
 import Hero from '../components/Hero';
 import Features from '../components/Features';
 import Courses from '../components/Courses';
-import Pricing from '../components/Pricing';
+import PricingSection from '../components/PricingSection';
 import Footer from '../components/Footer';
 
 const HomePage: React.FC = () => {
@@ -13,7 +13,7 @@ const HomePage: React.FC = () => {
       <Hero />
       <Features />
       <Courses />
-      <Pricing />
+      <PricingSection />
       <Footer />
     </div>
   );
