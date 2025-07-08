@@ -31,20 +31,21 @@ const ParticleNetwork: React.FC = () => {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Initialize particles
-    const particleCount = 80;
+    // Initialize particles with enhanced colors
+    const particleCount = 100; // Increased particle count for a denser network
     const particles: Particle[] = [];
-    const colors = ['#3b82f6', '#06b6d4', '#10b981', '#8b5cf6', '#f59e0b'];
+    // Using a palette that contrasts well with dark backgrounds
+    const colors = ['#818cf8', '#c084fc', '#f472b6', '#22d3ee', '#34d399', '#fbbf24']; // Brighter, more vibrant colors
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.5,
+        vx: (Math.random() - 0.5) * 0.5, // Slightly faster movement
         vy: (Math.random() - 0.5) * 0.5,
-        radius: Math.random() * 2 + 1,
+        radius: Math.random() * 1.5 + 1.5, // Slightly larger particles
         color: colors[Math.floor(Math.random() * colors.length)],
-        opacity: Math.random() * 0.5 + 0.3,
+        opacity: Math.random() * 0.4 + 0.4, // Increased base opacity for particles
       });
     }
     particlesRef.current = particles;
@@ -60,6 +61,7 @@ const ParticleNetwork: React.FC = () => {
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      // Update and draw particles
       particles.forEach((particle, i) => {
         // Update position
         particle.x += particle.vx;
@@ -74,35 +76,92 @@ const ParticleNetwork: React.FC = () => {
         const dy = mouseRef.current.y - particle.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
         
-        if (distance < 100) {
-          const force = (100 - distance) / 100;
+        if (distance < 140) {
+          const force = (140 - distance) / 140;
           particle.vx += dx * force * 0.0001;
           particle.vy += dy * force * 0.0001;
         }
 
-        // Draw particle
+        // Enhanced particle glow
+        const glowGradient = ctx.createRadialGradient(
+          particle.x, particle.y, 0,
+          particle.x, particle.y, particle.radius * 4
+        );
+        glowGradient.addColorStop(0, particle.color + '80'); // More opaque center
+        glowGradient.addColorStop(0.5, particle.color + '40');
+        glowGradient.addColorStop(1, 'transparent');
+
+        // Draw outer glow
         ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
-        ctx.fillStyle = particle.color + Math.floor(particle.opacity * 255).toString(16).padStart(2, '0');
+        ctx.arc(particle.x, particle.y, particle.radius * 4, 0, Math.PI * 2);
+        ctx.fillStyle = glowGradient;
+        ctx.globalAlpha = particle.opacity * 0.5; // Increased glow opacity
         ctx.fill();
 
-        // Draw connections
+        // Draw main particle with gradient
+        const particleGradient = ctx.createRadialGradient(
+          particle.x, particle.y, 0,
+          particle.x, particle.y, particle.radius
+        );
+        particleGradient.addColorStop(0, particle.color);
+        particleGradient.addColorStop(1, particle.color + '80');
+
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+        ctx.fillStyle = particleGradient;
+        ctx.globalAlpha = particle.opacity;
+        ctx.fill();
+
+        // Draw connections with enhanced gradients
         for (let j = i + 1; j < particles.length; j++) {
           const other = particles[j];
           const dx = particle.x - other.x;
           const dy = particle.y - other.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance < 100) {
+          if (distance < 120) {
             ctx.beginPath();
             ctx.moveTo(particle.x, particle.y);
             ctx.lineTo(other.x, other.y);
-            const opacity = (100 - distance) / 100 * 0.3;
-            ctx.strokeStyle = `rgba(59, 130, 246, ${opacity})`;
-            ctx.lineWidth = 1;
+            const opacity = (120 - distance) / 120 * 0.6; // Increased connection opacity
+            const connectionGradient = ctx.createLinearGradient(
+              particle.x, particle.y,
+              other.x, other.y
+            );
+            connectionGradient.addColorStop(0, particle.color + '80');
+            connectionGradient.addColorStop(1, other.color + '80');
+            ctx.strokeStyle = connectionGradient;
+            ctx.globalAlpha = opacity;
+            ctx.lineWidth = 1.5; // Slightly thicker lines
             ctx.stroke();
           }
         }
+
+        // Enhanced mouse connections
+        const mouseDistance = Math.sqrt(
+          (mouseRef.current.x - particle.x) ** 2 + 
+          (mouseRef.current.y - particle.y) ** 2
+        );
+        
+        if (mouseDistance < 180) {
+          ctx.beginPath();
+          ctx.moveTo(particle.x, particle.y);
+          ctx.lineTo(mouseRef.current.x, mouseRef.current.y);
+          const opacity = (180 - mouseDistance) / 180 * 0.8; // Increased mouse connection opacity
+          const mouseGradient = ctx.createLinearGradient(
+            particle.x, particle.y,
+            mouseRef.current.x, mouseRef.current.y
+          );
+          mouseGradient.addColorStop(0, particle.color);
+          mouseGradient.addColorStop(1, '#818cf8'); // Consistent with new palette
+          ctx.strokeStyle = mouseGradient;
+          ctx.globalAlpha = opacity;
+          ctx.lineWidth = 2.5; // Thicker mouse connection lines
+          ctx.stroke();
+        }
+
+        // Reset global alpha for next particle/drawing operations
+        ctx.globalAlpha = 1;
       });
 
       animationFrameRef.current = requestAnimationFrame(animate);
@@ -110,6 +169,7 @@ const ParticleNetwork: React.FC = () => {
 
     animate();
 
+    // Cleanup function
     return () => {
       window.removeEventListener('resize', resizeCanvas);
       window.removeEventListener('mousemove', handleMouseMove);
@@ -122,7 +182,7 @@ const ParticleNetwork: React.FC = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0"
+      className="fixed inset-0 pointer-events-none z-[1]" // Stays behind everything with z-index 1
       style={{ background: 'transparent' }}
     />
   );

@@ -1,9 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './hooks/useAuth';
+import { AuthProvider } from './context/AuthContext';
 import HomePage from './pages/HomePage';
 import DashboardPage from './pages/DashboardPage';
-import CoursePage from './pages/CoursePage';
+import SupportPage from './pages/SupportPage';
+import VerifyEmailPage from './pages/VerifyEmailPage';
 
 function App() {
   return (
@@ -13,7 +14,8 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/course/:id" element={<CoursePage />} />
+            <Route path="/support" element={<SupportPage />} />
+            <Route path="/verify-email" element={<VerifyEmailPage />} />
           </Routes>
         </div>
       </Router>

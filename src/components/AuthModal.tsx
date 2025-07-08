@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { X, Mail, Lock, User, Eye, EyeOff, Loader, Sparkles, Shield, Heart, Crown, Zap, Camera, Check } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../context/AuthContext';
 
-const AuthModal: React.FC = () => {
-  const { isAuthModalOpen, authModalMode, closeAuthModal, login, register, isLoading } = useAuth();
-  const [isLogin, setIsLogin] = useState(authModalMode === 'login');
+interface AuthModalProps {
+  onClose: () => void;
+  initialMode?: 'login' | 'register';
+}
+
+const AuthModal: React.FC<AuthModalProps> = ({ onClose, initialMode = 'login' }) => {
+  const [isLogin, setIsLogin] = useState(initialMode === 'login');
   const [showPassword, setShowPassword] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<'free' | 'premium'>('premium');
   const [selectedAvatar, setSelectedAvatar] = useState<number>(0);
@@ -14,13 +18,7 @@ const AuthModal: React.FC = () => {
     name: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-  // Update login state when modal mode changes
-  React.useEffect(() => {
-    setIsLogin(authModalMode === 'login');
-  }, [authModalMode]);
-
-  if (!isAuthModalOpen) return null;
+  const { login, register, isLoading } = useAuth();
 
   const plans = [
     {
@@ -85,17 +83,13 @@ const AuthModal: React.FC = () => {
 
     try {
       if (isLogin) {
-        await login({ email: formData.email, password: formData.password });
+        await login(formData.email, formData.password);
       } else {
-        await register({ 
-          name: formData.name,
-          email: formData.email, 
-          password: formData.password,
-          password_confirmation: formData.password
-        });
+        await register(formData.email, formData.password, formData.name);
       }
+      onClose();
     } catch (error) {
-      setErrors({ submit: error instanceof Error ? error.message : 'Authentication failed.' });
+      setErrors({ submit: error instanceof Error ? error.message : 'Authentication failed. Please connect to a real backend service.' });
     }
   };
 
@@ -119,7 +113,7 @@ const AuthModal: React.FC = () => {
       {/* Enhanced Backdrop */}
       <div 
         className="absolute inset-0 bg-black/70 backdrop-blur-2xl"
-        onClick={closeAuthModal}
+        onClick={onClose}
       />
       
       {/* Floating particles - only show when modal is open */}
@@ -145,7 +139,7 @@ const AuthModal: React.FC = () => {
         
         {/* Close button */}
         <button
-          onClick={closeAuthModal}
+          onClick={onClose}
           className="absolute top-6 right-6 text-gray-400 hover:text-white transition-all duration-200 p-2 hover:bg-white/10 rounded-full z-10"
         >
           <X className="h-5 w-5" />
