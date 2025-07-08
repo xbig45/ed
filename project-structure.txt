@@ -1,0 +1,121 @@
+# C++ Hub - Simple Project Structure for Laravel Backend Integration
+
+## Frontend Structure (React + TypeScript)
+```
+src/
+├── components/           # All components in one folder
+│   ├── Header.tsx       # Navigation header
+│   ├── Hero.tsx         # Landing hero section
+│   ├── Features.tsx     # Features showcase
+│   ├── Courses.tsx      # Course listings
+│   ├── Pricing.tsx      # Pricing plans
+│   ├── Footer.tsx       # Site footer
+│   ├── AuthModal.tsx    # Login/Register modal
+│   └── LoadingSpinner.tsx # Loading component
+├── hooks/               # Custom React hooks
+│   ├── useAuth.tsx      # Authentication hook
+│   └── useApi.tsx       # API calls hook
+├── services/            # API service layer
+│   ├── api.ts          # Main API configuration
+│   ├── auth.ts         # Authentication API calls
+│   └── courses.ts      # Course-related API calls
+├── types/               # TypeScript type definitions
+│   ├── auth.ts         # Authentication types
+│   ├── course.ts       # Course types
+│   └── api.ts          # API response types
+├── utils/               # Utility functions
+│   ├── constants.ts    # App constants
+│   └── helpers.ts      # Helper functions
+├── pages/               # Page components
+│   ├── HomePage.tsx    # Main landing page
+│   ├── DashboardPage.tsx # User dashboard
+│   └── CoursePage.tsx  # Individual course page
+├── App.tsx             # Main app component
+├── main.tsx           # App entry point
+└── index.css          # Global styles
+```
+
+## Laravel Backend Structure (Recommended)
+```
+app/
+├── Http/
+│   ├── Controllers/
+│   │   ├── AuthController.php      # Authentication endpoints
+│   │   ├── CourseController.php    # Course management
+│   │   ├── UserController.php      # User profile management
+│   │   └── DashboardController.php # Dashboard data
+│   ├── Middleware/
+│   │   └── Cors.php               # CORS handling
+│   └── Requests/
+│       ├── LoginRequest.php       # Login validation
+│       ├── RegisterRequest.php    # Registration validation
+│       └── CourseRequest.php      # Course validation
+├── Models/
+│   ├── User.php                   # User model
+│   ├── Course.php                 # Course model
+│   ├── Enrollment.php             # User-Course relationship
+│   └── Progress.php               # Learning progress
+└── Resources/
+    └── UserResource.php           # API resource formatting
+```
+
+## API Endpoints Structure
+```
+POST   /api/auth/register          # User registration
+POST   /api/auth/login             # User login
+POST   /api/auth/logout            # User logout
+GET    /api/auth/user              # Get current user
+PUT    /api/auth/user              # Update user profile
+
+GET    /api/courses                # List all courses
+GET    /api/courses/{id}           # Get specific course
+POST   /api/courses/{id}/enroll    # Enroll in course
+GET    /api/user/courses           # Get user's enrolled courses
+PUT    /api/user/courses/{id}/progress # Update course progress
+
+GET    /api/dashboard              # Get dashboard data
+GET    /api/user/stats             # Get user statistics
+```
+
+## Database Tables (Laravel Migrations)
+```
+users:
+- id, name, email, email_verified_at, password, plan_type, created_at, updated_at
+
+courses:
+- id, title, description, image_url, duration, level, price, created_at, updated_at
+
+enrollments:
+- id, user_id, course_id, enrolled_at, completed_at, progress_percentage
+
+user_progress:
+- id, user_id, course_id, lesson_id, completed_at, time_spent
+```
+
+## Key Features for Simple Integration:
+1. **Flat component structure** - All components in one folder
+2. **Clear API service layer** - Easy to connect to Laravel endpoints
+3. **Type-safe interfaces** - TypeScript types match Laravel models
+4. **Responsive design** - Mobile-first approach with Tailwind CSS
+5. **Simple state management** - React hooks only, no complex state libraries
+6. **Modular authentication** - Easy to integrate with Laravel Sanctum/Passport
+7. **Clean separation** - Frontend logic separated from backend concerns
+
+## Environment Variables (.env)
+```
+VITE_API_URL=http://localhost:8000/api
+VITE_APP_NAME=C++ Hub
+```
+
+## Responsive Breakpoints:
+- Mobile: 320px - 768px
+- Tablet: 768px - 1024px  
+- Desktop: 1024px+
+
+## Laravel Integration Notes:
+- Use Laravel Sanctum for API authentication
+- CORS configured for frontend domain
+- API resources for consistent JSON responses
+- Form request validation for all inputs
+- Rate limiting on authentication endpoints
+- File uploads for course materials/avatars
