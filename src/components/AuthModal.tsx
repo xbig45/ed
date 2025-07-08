@@ -2,13 +2,9 @@ import React, { useState } from 'react';
 import { X, Mail, Lock, User, Eye, EyeOff, Loader, Sparkles, Shield, Heart, Crown, Zap, Camera, Check } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
-interface AuthModalProps {
-  onClose: () => void;
-  initialMode?: 'login' | 'register';
-}
-
-const AuthModal: React.FC<AuthModalProps> = ({ onClose, initialMode = 'login' }) => {
-  const [isLogin, setIsLogin] = useState(initialMode === 'login');
+const AuthModal: React.FC = () => {
+  const { isAuthModalOpen, authModalMode, closeAuthModal, login, register, isLoading } = useAuth();
+  const [isLogin, setIsLogin] = useState(authModalMode === 'login');
   const [showPassword, setShowPassword] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<'free' | 'premium'>('premium');
   const [selectedAvatar, setSelectedAvatar] = useState<number>(0);
@@ -18,7 +14,13 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose, initialMode = 'login' })
     name: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const { login, register, isLoading } = useAuth();
+
+  // Update login state when modal mode changes
+  React.useEffect(() => {
+    setIsLogin(authModalMode === 'login');
+  }, [authModalMode]);
+
+  if (!isAuthModalOpen) return null;
 
   const plans = [
     {
@@ -83,13 +85,17 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose, initialMode = 'login' })
 
     try {
       if (isLogin) {
-        await login(formData.email, formData.password);
+        await login({ email: formData.email, password: formData.password });
       } else {
-        await register(formData.email, formData.password, formData.name);
+        await register({ 
+          name: formData.name,
+          email: formData.email, 
+          password: formData.password,
+          password_confirmation: formData.password
+        });
       }
-      onClose();
     } catch (error) {
-      setErrors({ submit: error instanceof Error ? error.message : 'Authentication failed. Please connect to a real backend service.' });
+      setErrors({ submit: error instanceof Error ? error.message : 'Authentication failed.' });
     }
   };
 
@@ -113,7 +119,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose, initialMode = 'login' })
       {/* Enhanced Backdrop */}
       <div 
         className="absolute inset-0 bg-black/70 backdrop-blur-2xl"
-        onClick={onClose}
+        onClick={closeAuthModal}
       />
       
       {/* Floating particles - only show when modal is open */}
@@ -139,7 +145,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose, initialMode = 'login' })
         
         {/* Close button */}
         <button
-          onClick={onClose}
+          onClick={closeAuthModal}
           className="absolute top-6 right-6 text-gray-400 hover:text-white transition-all duration-200 p-2 hover:bg-white/10 rounded-full z-10"
         >
           <X className="h-5 w-5" />

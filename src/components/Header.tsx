@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Code, User, LogOut, Crown } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import AuthModal from './AuthModal';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -156,6 +157,8 @@ const Header: React.FC = () => {
           </div>
         )}
       </div>
+      
+      <AuthModal />
     </header>
   );
 };

@@ -4,7 +4,6 @@ import { AuthProvider } from './hooks/useAuth';
 import HomePage from './pages/HomePage';
 import DashboardPage from './pages/DashboardPage';
 import CoursePage from './pages/CoursePage';
-import AuthModal from './components/AuthModal';
 
 function App() {
   return (
@@ -16,7 +15,6 @@ function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/course/:id" element={<CoursePage />} />
           </Routes>
-          <AuthModal />
         </div>
       </Router>
     </AuthProvider>
